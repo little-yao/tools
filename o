@@ -1,0 +1,7 @@
+#!/usr/bin/env bash
+for path in $@
+do
+  if(echo $path | grep -qc 'src'); then
+    command $2 $path
+  fi
+done

@@ -1,0 +1,5 @@
+#!/usr/bin/env bash
+alias ws='webstorm'
+alias chrome-clear="/Applications/Google\ Chrome.app/Contents/MacOS/Google\ Chrome  --user-data-dir=\"$(mktemp -d)\" "
+alias chrome='/Applications/Google\ Chrome.app/Contents/MacOS/Google\ Chrome'
+alias nr='npm run'
