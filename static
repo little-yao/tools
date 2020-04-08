@@ -1,0 +1,29 @@
+#!/usr/bin/env bash
+# daily/prepub版本切换
+git_current_branch () {
+	local ref
+	ref=$(command git symbolic-ref --quiet HEAD 2> /dev/null)
+	local ret=$?
+	if [[ $ret != 0 ]]
+	then
+		[[ $ret == 128 ]] && return
+		ref=$(command git rev-parse --short HEAD 2> /dev/null)  || return
+	fi
+	echo ${ref#refs/heads/}
+}
+# 切换本地分支 daily/2.4.5 => 2.4.5
+curBranch=$(git_current_branch);
+version=$(echo ${curBranch} | cut -d '/' -f 2)
+# 获取当前项目名称
+projectName=$(pwd | sed 's/.*\/\([^\/]*\)$/\1/')
+staticPach="https://img.bafang.com/cdn/assets/okfe/"${projectName}"/"${version}"/okex/index.js"
+
+httpCode=$(curl -I -o /dev/null -s -w %{http_code} ${staticPach})
+
+if [[ ${httpCode} = 200 ]]
+then
+exit 0;
+else
+echo "当前版本没有打tag"
+exit 1;
+fi

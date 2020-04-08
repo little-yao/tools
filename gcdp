@@ -1,0 +1,31 @@
+#!/usr/bin/env bash
+# daily/prepub版本切换
+git_current_branch () {
+	local ref
+	ref=$(command git symbolic-ref --quiet HEAD 2> /dev/null)
+	local ret=$?
+	if [[ $ret != 0 ]]
+	then
+		[[ $ret == 128 ]] && return
+		ref=$(command git rev-parse --short HEAD 2> /dev/null)  || return
+	fi
+	echo ${ref#refs/heads/}
+}
+# 切换本地分支 daily/2.4.5 => 2.4.5
+curBranch=$(git_current_branch);
+version=$(echo ${curBranch} | cut -d '/' -f 2)
+if [[ ${curBranch} =~ 'prepub' ]]
+then
+env='daily'
+else
+env='prepub'
+fi
+times=$(git branch | grep -c "${version}")
+if [[ $times -eq 1 ]]
+then
+  sign='-b'
+else
+  sign=''
+fi
+
+git checkout ${sign} ${env}/${version}
